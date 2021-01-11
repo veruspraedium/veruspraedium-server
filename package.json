@@ -1,0 +1,8 @@
+{
+  "name": "veruspraedium-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/veruspraedium/veruspraedium-server.git",
+  "author": "titanv <a01098930999@gmail.com>",
+  "license": "MIT"
+}
