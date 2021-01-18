@@ -3,8 +3,8 @@ import auth from './admin';
 
 const api = new Router();
 
-import {login} from './auth.controller';
-//import {} from './post.controller';
+import {login} from './auth/auth.controller';
+//import {} from './post/post.controller';
 
 
 api.use('/admin', auth.routes());
