@@ -2,7 +2,7 @@ import Router from '@koa/router';
 
 const auth = new Router();
 
-import {login} from './auth.controller';
+import {login} from './admin.controller';
 
 auth.get('/', login);
 
