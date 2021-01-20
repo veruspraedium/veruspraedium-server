@@ -1,7 +1,7 @@
 import MongoClient from 'mongodb';
 MongoClient.MongoClient;
-var url = process.env.url;
-var db;
+const url = process.env.url;
+const db;
 
 MongoClient.connect(url, function (err, database) {
    if (err) {
