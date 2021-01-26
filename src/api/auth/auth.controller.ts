@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import redis from 'async-redis';
 import crypto from 'crypto';
 import User from '../../model/user';
-import { add } from '../../lib/addUser';
+import { addUser, findUser } from '../../lib/process';
 import { jwtsign, jwtverify } from '../../lib/token';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -25,7 +25,7 @@ export const signUp = (async (ctx,next) => { // 0
     rows = await User.find({$or: [{id: id}, {nickname: nickname}]}).limit(1).exec();
 
     if (rows[0] == undefined) {
-      add(id, password, nickname, address)
+      addUser(id, password, nickname, address)
       .then(async () =>{ console.log("[system] - 유저추가 완료"); });
       status = 202;
       body = {};
@@ -262,6 +262,57 @@ export const logout = (async (ctx,next) => { // 0
       "errorCode" : "E302",
       "errorDescription" : "잘못되거나 만료된 access_token"
     };
+  }
+
+  ctx.status = status;
+  ctx.body = body;
+});
+
+export const requestAccessToken = (async (ctx,next) => { // 0
+  let { accesstoken, refreshtoken } = ctx.request.header;
+  let refreshtokenCheck = await jwtverify(refreshtoken);
+  let body,status;
+  accesstoken = await jwtverify(accesstoken);
+
+  if (refreshtokenCheck[0] && refreshtoken == await client.get(accesstoken[1])) {
+    accesstoken = await jwtsign(accesstoken[1], '30m');
+    status = 201;
+    body = { "accessToken" : accesstoken };
+  }else{
+    status = 412;
+    body = {
+      "errorMessage" : "invalid_grant",
+      "errorCode" : "E302",
+      "errorDescription" : "잘못되거나 만료된 token"
+    };
+  }
+
+  ctx.status = status;
+  ctx.body = body;
+});
+
+export const findPassword = (async (ctx,next) => { // 0
+  const { id } = ctx.request.body;
+  let body,status,rows;
+
+  try{
+    rows = await User.find({id: id}).limit(1).exec();
+
+    if (rows[0] != undefined) {
+      findUser(id).then(async () =>{ console.log("[system] - 유저비번찾기 완료"); });
+
+      status = 202;
+      body = {};
+    }else{
+      status = 403;
+      body = {
+        "errorMessage" : "invalid_account",
+        "errorCode" : "E108",
+        "errorDescription" : "존재하지 않는 계정"
+      };
+    }
+  }catch(err){
+    return 'error occured';
   }
 
   ctx.status = status;

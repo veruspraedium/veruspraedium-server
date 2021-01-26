@@ -11,7 +11,7 @@ const mongoConfig = {
   useUnifiedTopology: true
 };
 
-export const add = (async (id, password, nickname, address) =>{
+export const addUser = (async (id, password, nickname, address) =>{
   const cipher = crypto.createCipher('aes-256-cbc', process.env.aessecret);
   let result : any = cipher.update(id, 'utf8', 'base64');
   result += cipher.final('base64');
@@ -30,5 +30,17 @@ export const add = (async (id, password, nickname, address) =>{
 
   await sendmail(id,'test',`http://localhost:5000/api/verification/${result}`);
 
+  return;
+});
+
+
+export const findUser = (async (id) =>{
+  console.log("[system] - 유저비번찾기 시작");
+  
+  let newPassword = await Math.random().toString(36).substr(2,11);
+  const password = await crypto.createHmac('sha512', process.env.secret).update(newPassword).digest('hex');
+
+  await User.update({id: id}, {password: password});
+  await sendmail(id,'비밀번호 찾기',`id 님의 비밀번호는 ${newPassword} 입니다. 로그인 후 변경해주세요.`);
   return;
 });
