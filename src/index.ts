@@ -16,10 +16,8 @@ app.use(cors());
 app.use(logger());
 app.use(koaBody());
 app.use(router.routes()).use(router.allowedMethods());
-const parseJSON = koaBody({parsedMethods: ['POST', 'PUT', 'PATCH', 'GET', 'HEAD', 'DELETE']})
 
 router.use('/api', api.routes());
-
 
 let serverCallback = app.callback();
 let httpServer = http.createServer(serverCallback);
