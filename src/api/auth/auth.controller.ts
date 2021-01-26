@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import redis from 'redis';
+import redis from 'async-redis';
 import crypto from 'crypto';
 import User from '../../model/user';
 import { add } from '../../lib/addUser';
@@ -47,14 +47,14 @@ export const signUp = (async (ctx,next) => { // 0
 });
 
 export const loadProfile = (async (ctx,next) => { // 0
-  const { accesstoken } = ctx.request.header;
-  const id = await jwtverify(accesstoken);
+  let { accesstoken } = ctx.request.header;
+  accesstoken = await jwtverify(accesstoken);
   let body,status,rows;
 
   
-  if(id != ''){
+  if(accesstoken[0]){
     try{
-      rows = await User.find({id: id}).limit(1).exec();
+      rows = await User.find({id: accesstoken}).limit(1).exec();
 
       if (rows[0] != undefined) {
         status = 200;
@@ -98,21 +98,22 @@ export const changeProfile = (async (ctx,next) => {
   ctx.body = body;
 });
 
-export const userSecession = (async (ctx,next) => {
-  let { accesstoken } = ctx.request.header;
-  const { id } = ctx.request.body;
-  console.log(accesstoken);
-  
-  const password = crypto.createHmac('sha512', process.env.secret).update(ctx.request.body.password).digest('hex');
+export const userSecession = (async (ctx,next) => { // 0
+  let { accesstoken, refreshtoken } = ctx.request.header;
+  let body,status,rows, redisCheck = false;
+  let refreshtokenCheck = await jwtverify(refreshtoken);
   accesstoken = await jwtverify(accesstoken);
-  let body,status,rows;
 
-  if(id != ''){
+  if(await client.get(accesstoken[1]) == refreshtoken){
+    redisCheck = true;
+  }
+  
+  if(accesstoken[0] && refreshtokenCheck[0] && redisCheck){
     try{
-      rows = await User.find({$and: [{id: id}, {password: password}]}).limit(1).exec();
+      rows = await User.find({id: accesstoken[1]}).limit(1).exec();
 
-      if (rows[0] != undefined && id == accesstoken) {
-        await User.remove({$and: [{id: id}, {password: password}]});
+      if (rows[0] != undefined) {
+        await User.deleteOne({id: accesstoken[1]});
         status = 201;
         body = {};
       }else{
@@ -131,7 +132,7 @@ export const userSecession = (async (ctx,next) => {
     body = {
       "errorMessage" : "invalid_grant",
       "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
+      "errorDescription" : "잘못되거나 만료된 token"
     };
   }
 
@@ -244,10 +245,24 @@ export const login = (async (ctx,next) => { // 0
   ctx.body = body;
 });
 
-export const logout = (async (ctx,next) => {
-  const id = jwtverify(ctx.request.header.accessToken);
-  let body,status,rows,sql,refreshToken,accessToken;
+export const logout = (async (ctx,next) => { // 0
+  let { accesstoken } = ctx.request.header;
+  let body,status,rows, redisCheck = false;
+  accesstoken = await jwtverify(accesstoken);
 
+  if (accesstoken[0]) {
+    await client.del(accesstoken[1]);
+
+    status = 201;
+    body = {};
+  }else{
+    status = 412;
+    body = {
+      "errorMessage" : "invalid_grant",
+      "errorCode" : "E302",
+      "errorDescription" : "잘못되거나 만료된 access_token"
+    };
+  }
 
   ctx.status = status;
   ctx.body = body;
