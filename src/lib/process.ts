@@ -13,7 +13,7 @@ const mongoConfig = {
 
 export const addUser = (async (id, password, nickname, address) =>{
   const cipher = crypto.createCipher('aes-256-cbc', process.env.aessecret);
-  let result : any = cipher.update(id, 'utf8', 'base64');
+  let result = cipher.update(id, 'utf8', 'base64');
   result += cipher.final('base64');
   mongoose.connect(process.env.uri, mongoConfig);
 
