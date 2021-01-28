@@ -17,18 +17,25 @@ mongoose.connect(process.env.uri, mongoConfig);
 
 
 export const signUp = (async (ctx) => { // 0
-  const {id, nickname, address} = ctx.request.body;
-  const password = crypto.createHmac('sha512', process.env.secret).update(ctx.request.body.password).digest('hex');
-  let body,status,rows;
+  const {id, nickname, address, password} = ctx.request.body;
+  let body,status,rows,check;
 
   try{
     rows = await User.find({$or: [{id: id}, {nickname: nickname}]}).limit(1).exec();
 
     if(rows[0] == undefined){
-      await addUser(id, password, nickname, address)
-      .then(async () =>{ console.log("[system] - 유저추가 완료"); });
-      status = 202;
-      body = {};
+      check =await addUser(id, password, nickname, address)
+      if (check) {
+        status = 202;
+        body = {};
+      }else{
+        status = 412;
+        body = {
+          "errorMessage" : "invalid_account",
+          "errorCode" : "E105",
+          "errorDescription" : "잘못된 이메일 형식"
+        };      
+      }
     }else{
       status = 403;
       body = {
@@ -37,7 +44,9 @@ export const signUp = (async (ctx) => { // 0
         "errorDescription" : "이미 존재하는 계정"
       };
     }
-  }catch(err){ return 'error occured'; }
+  }catch(err){ 
+    console.log("에러죠?");
+    }
 
   ctx.status = status;
   ctx.body = body;

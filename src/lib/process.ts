@@ -1,36 +1,35 @@
-import mongoose from 'mongoose';
 import crypto from 'crypto';
 import User from '../model/user';
 import { sendmail } from './email';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const mongoConfig = {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true
-};
-
 export const addUser = (async (id, password, nickname, address) =>{
   const cipher = crypto.createCipher('aes-256-cbc', process.env.aessecret);
   let result = cipher.update(id, 'utf8', 'base64');
+  password = crypto.createHmac('sha512', process.env.secret).update(password).digest('hex');
   result += cipher.final('base64');
-  mongoose.connect(process.env.uri, mongoConfig);
+  let check = true;
 
+  try{
   console.log("[system] - 유저추가 시작");
-  
+  await sendmail(id,'test',`http://localhost:5000/api/verification/${result}`);
+
   const user = new User({
     id: id,
     password: password,
     nickname: nickname,
     address: address,
   });
-
   await user.save();
+  console.log("[system] - 유저추가 완료");
+  }
+  catch(err){
+    console.log('유효하지 않은 이메일');
+    check = false;
+  }
 
-  await sendmail(id,'test',`http://localhost:5000/api/verification/${result}`);
-
-  return;
+  return check;
 });
 
 
