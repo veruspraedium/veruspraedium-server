@@ -10,6 +10,8 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   }, 
-  "rules": { "no-console": "warn"},
-  "plugins": ["jest"]
+  "plugins": ["jest"],
+  "rules": { 
+    "no-console": "warn"
+  }
 }
