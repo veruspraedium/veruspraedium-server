@@ -12,7 +12,6 @@ export const jwtverify = (async (token) => {
   await jwt.verify(token, process.env.jwtsecret, async (error, decoded) => {
     if(error){ 
       decoded = await jwt.decode(token);
-
       check = [false, decoded['id']]; 
       }
     else{ check = [true, decoded['id']]; }
