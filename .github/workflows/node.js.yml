@@ -29,8 +29,6 @@ jobs:
         secret: ${{ secrets.secret }}
         aessecret: ${{ secrets.aessecret }}
         jwtsecret: ${{ secrets.jwtsecret }}
-        directory: ./
-        file_name: .env
      
      
      
