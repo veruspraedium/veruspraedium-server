@@ -12,7 +12,7 @@ jobs:
     - name: Make envfile
       uses: SpicyPizza/create-envfile@v1
       with:
-        uri: ${{ secrets.uri }}
+        envkey_uri: ${{ secrets.uri }}
         emailid: ${{ secrets.emailid }}
         emailpassword: ${{ secrets.emailpassword }}
         secret: ${{ secrets.secret }}
