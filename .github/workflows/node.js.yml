@@ -9,14 +9,15 @@ jobs:
     runs-on: ubuntu-18.04
  
     steps:
-    - name: Make envfile
-      uses: SpicyPizza/create-envfile@v1
-      with:
-        envkey_uri: ${{ secrets.uri }}
-        emailid: ${{ secrets.emailid }}
-        emailpassword: ${{ secrets.emailpassword }}
-        secret: ${{ secrets.secret }}
-        aessecret: ${{ secrets.aessecret }}
-        jwtsecret: ${{ secrets.jwtsecret }}
+        
+    - name: Load .env file  
+      uses: xom9ikk/dotenv@v1
 
-        file_name: .env
+    - name: Some other action
+  run: |
+    echo "uri: ${{ secrets.uri }}"
+    echo "emailid: ${{ secrets.emailid }}"
+    echo "emailpassword: ${{ secrets.emailpassword }}"  
+    echo "secret: ${{ secrets.secret }}"  
+    echo "aessecret: ${{ secrets.aessecret }}"  
+    echo "jwtsecret: ${{ secrets.jwtsecret }}"  
