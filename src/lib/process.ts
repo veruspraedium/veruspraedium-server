@@ -43,3 +43,20 @@ export const findUser = (async (id) =>{
   await sendmail(id,'비밀번호 찾기',`id 님의 비밀번호는 ${newPassword} 입니다. 로그인 후 변경해주세요.`);
   return;
 });
+
+
+export const updateUserId = (async (id) =>{
+  const cipher = crypto.createCipher('aes-256-cbc', process.env.aessecret);
+  let result = cipher.update(id, 'utf8', 'base64');
+  result += cipher.final('base64');
+  let check = true;
+
+    try{
+    await sendmail(id,'test',`http://localhost:5000/api/verification/${result}`);
+    }catch(err){
+    console.log('유효하지 않은 이메일');
+    check = false;
+    }
+  
+  return check;
+});
