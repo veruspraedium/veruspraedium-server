@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import redis from 'async-redis';
 import crypto from 'crypto';
 import User from '../../model/user';
-import { addUser, findUser } from '../../lib/process';
+import { addUser, findUser, updateUserId } from '../../lib/process';
 import { jwtsign, jwtverify } from '../../lib/token';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -59,7 +59,7 @@ export const loadProfile = (async (ctx) => { // 0
   
   if(accesstoken[0]){
     try{
-      rows = await User.find({id: accesstoken}).limit(1).exec();
+      rows = await User.find({id: accesstoken[1]}).limit(1).exec();
 
       if (rows[0] != undefined) {
         status = 200;
@@ -93,8 +93,56 @@ export const loadProfile = (async (ctx) => { // 0
 });
 
 export const changeProfile = (async (ctx) => {
-  let body,status;
+  const accesstoken = await jwtverify(ctx.request.header.accesstoken);
+  const change = ctx.request.body.change.split(',');
+  const options = ['nickname', 'id', 'password', 'address', 'profileImage', 'introduce'];
+  let body, status, rows, mailStatus, ext, fileName;
+  let sql = {};
 
+  if (ctx.request.file != undefined){
+    ext = ctx.request.file.originalname.split('.')[1];
+    fileName = `${ctx.request.file.filename}.${ext}`;
+  }
+
+  if(accesstoken[0]){
+    try{
+      rows = await User.find({id: accesstoken[1]}).limit(1).exec();
+      sql['_id'] = rows[0]['_id'];
+
+      if (ext !== 'png' && ext !== 'jpg' && ext !== 'gif' && ext !== 'jpeg') { throw new Error("extention invalid"); }
+      
+      for (let i=0; i < 6; i++) {
+        if (change[i] == 'true'){
+          if (options[i] == 'id') {
+            sql['cert'] = false;
+            sql[options[i]] = ctx.request.body[options[i]];
+            mailStatus = await updateUserId(ctx.request.body[options[i]]);
+            if (mailStatus == false) { throw new Error("email invalid"); }
+          }else if (options[i] == 'password'){ sql[options[i]] = await crypto.createHmac('sha512', process.env.secret).update(ctx.request.body[options[i]]).digest('hex');
+          }else if (options[i] == 'profileImage'){ sql[options[i]] = fileName;
+          }else{ sql[options[i]] = ctx.request.body[options[i]]; }
+        }else{ sql[options[i]] = rows[0][options[i]]; }
+      }
+      await User.update(sql);
+
+      status = 201;
+      body = {};
+    }catch(err){ 
+      status = 403;
+      body = {
+        "errorMessage" : "invalid_from",
+        "errorCode" : "E401",
+        "errorDescription" : "잘못된 형식의 요청"
+      }; 
+    }
+  }else{
+    status = 412;
+    body = {
+      "errorMessage" : "invalid_grant",
+      "errorCode" : "E302",
+      "errorDescription" : "잘못되거나 만료된 access_token"
+    };
+  }
   ctx.status = status;
   ctx.body = body;
 });
@@ -186,7 +234,7 @@ export const verification = (async (ctx) => { // 0
     rows = await User.find({id:result}).limit(1).exec();
 
     if (rows[0] != undefined) {
-      await User.update({id: result}, {cert: true});
+      await User.update({id: result, cert: true});
       status = 201;
       body = {};
     }else{
