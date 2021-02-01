@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import redis from 'async-redis';
 import crypto from 'crypto';
+import send from 'koa-send';
 import User from '../../model/user';
 import { addUser, findUser, updateUserId } from '../../lib/process';
 import { jwtsign, jwtverify } from '../../lib/token';
@@ -101,7 +102,7 @@ export const changeProfile = (async (ctx) => {
 
   if (ctx.request.file != undefined){
     ext = ctx.request.file.originalname.split('.')[1];
-    fileName = `${ctx.request.file.filename}.${ext}`;
+    fileName = `${ctx.request.file.filename}`;
   }
 
   if(accesstoken[0]){
@@ -364,4 +365,19 @@ export const findPassword = (async (ctx) => { // 0
 
   ctx.status = status;
   ctx.body = body;
+});
+
+export const loadImage = (async (ctx) => { // 0
+  const { imagepath } = ctx.params;
+  
+  try {
+   await send(ctx, imagepath, { root:  './files/' });
+  }catch(err){
+    ctx.status = 403;
+    ctx.body = {
+      "errorMessage" : "does_not_exist",
+      "errorCode" : "E501",
+      "errorDescription" : "존재하지 않는 파일"
+    };
+  }
 });
