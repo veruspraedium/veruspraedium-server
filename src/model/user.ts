@@ -12,7 +12,7 @@ const userSchema = new Schema({
   isWriter: { type: Boolean, default: false },
   subscribe: { type: Array, default: [] },
   cert: { type: Boolean, default: false },
-  published_date: { type: Date, default: Date.now }
+  signUpDate: { type: Date, default: Date.now }
 });
 
 
