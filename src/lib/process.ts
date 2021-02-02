@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import User from '../model/user';
+import Post from '../model/post';
 import { sendmail } from './email';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -25,7 +26,7 @@ export const addUser = (async (id, password, nickname, address) =>{
   console.log("[system] - 유저추가 완료");
   }
   catch(err){
-    console.log('유효하지 않은 이메일');
+    console.log('[system] - 유효하지 않은 이메일');
     check = false;
   }
 
@@ -54,9 +55,35 @@ export const updateUserId = (async (id) =>{
     try{
     await sendmail(id,'test',`http://localhost:5000/api/verification/${result}`);
     }catch(err){
-    console.log('유효하지 않은 이메일');
+    console.log('[system] - 유효하지 않은 이메일');
     check = false;
     }
   
+  return check;
+});
+
+
+export const addPost = (async (id, title ,category ,preview ,content, imagePath) =>{
+  let check = true;
+
+  try{
+  console.log("[system] - 글 추가 시작");
+
+  const post = new Post({
+    userId: id,
+    title: title,
+    category: category,
+    preview: preview,
+    titleImage: imagePath,
+    content: content
+  });
+  await post.save();
+  console.log("[system] - 글 추가 완료");
+  }
+  catch(err){
+    console.log('[system] - 중복글 존재 또는 옳지 않은 형식');
+    check = false;
+  }
+
   return check;
 });
