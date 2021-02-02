@@ -24,15 +24,15 @@ jobs:
     - run: yarn install
     - run: ./node_modules/.bin/cross-env uri='${{secrets.URI}}'
     - run: ./node_modules/.bin/cross-env-shell uri='${{secrets.URI}}'
-    - run: ./node_modules/.bin/cross-env emailid=${{secrets.EMAILID}} 
-    - run: ./node_modules/.bin/cross-env-shell emailid=${{secrets.EMAILID}} 
-    - run: ./node_modules/.bin/cross-env emailpassword=${{secrets.EMAILPASSWORD}} 
-    - run: ./node_modules/.bin/cross-env-shell emailpassword=${{secrets.EMAILPASSWORD}} 
-    - run: ./node_modules/.bin/cross-env secret=${{secrets.SECRET}} 
-    - run: ./node_modules/.bin/cross-env-shell secret=${{secrets.SECRET}} 
-    - run: ./node_modules/.bin/cross-env aessecret=${{secrets.AESSECRET}} 
-    - run: ./node_modules/.bin/cross-env-shell aessecret=${{secrets.AESSECRET}} 
-    - run: ./node_modules/.bin/cross-env jwtsecret=${{secrets.JWTSECRET}} 
-    - run: ./node_modules/.bin/cross-env-shell jwtsecret=${{secrets.JWTSECRET}} 
+    - run: ./node_modules/.bin/cross-env emailid='${{secrets.EMAILID}}'
+    - run: ./node_modules/.bin/cross-env-shell emailid='${{secrets.EMAILID}}'
+    - run: ./node_modules/.bin/cross-env emailpassword='${{secrets.EMAILPASSWORD}}'
+    - run: ./node_modules/.bin/cross-env-shell emailpassword='${{secrets.EMAILPASSWORD}}'
+    - run: ./node_modules/.bin/cross-env secret='${{secrets.SECRET}}'
+    - run: ./node_modules/.bin/cross-env-shell secret='${{secrets.SECRET}}'
+    - run: ./node_modules/.bin/cross-env aessecret='${{secrets.AESSECRET}}'
+    - run: ./node_modules/.bin/cross-env-shell aessecret='${{secrets.AESSECRET}}'
+    - run: ./node_modules/.bin/cross-env jwtsecret='${{secrets.JWTSECRET}}'
+    - run: ./node_modules/.bin/cross-env-shell jwtsecret='${{secrets.JWTSECRET}}'
 
     - run: yarn test
