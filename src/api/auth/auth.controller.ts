@@ -54,8 +54,7 @@ export const signUp = (async (ctx) => { // 0
 });
 
 export const loadProfile = (async (ctx) => { // 0
-  let { accesstoken } = ctx.request.header;
-  accesstoken = await jwtverify(accesstoken);
+  const accesstoken = await jwtverify(ctx.request.header.accesstoken);
   let body,status,rows;
   
   if(accesstoken[0]){
