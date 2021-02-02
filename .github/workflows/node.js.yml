@@ -23,13 +23,9 @@ jobs:
 
     - run: yarn install
 
-    - run: |
+    run: |
       touch .env
       echo uri=${{secrets.URI}}  >> .env
-      echo emailid=${{secrets.EMAILID}}  >> .env
-      echo emailpassword=${{secrets.EMAILPASSWORD}}  >> .env
-      echo secret=${{secrets.SECRET}}  >> .env
-      echo aessecret=${{secrets.AESSECRET}}  >> .env
-      echo jwtsecret=${{secrets.JWTSECRET}} >> .env
+
 
     - run: yarn test
