@@ -22,4 +22,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - run: yarn install
-    - run: export uri='${{secrets.URI}}' emailid=${{secrets.EMAILID}} emailpassword=${{secrets.EMAILPASSWORD}} secret=${{secrets.SECRET}} aessecret=${{secrets.AESSECRET}} jwtsecret=${{secrets.JWTSECRET}} jest --testEnvironment=node --verbose --forceExit --maxWorkers=1
+    - run: yarn export uri='${{secrets.URI}}' emailid=${{secrets.EMAILID}} emailpassword=${{secrets.EMAILPASSWORD}} secret=${{secrets.SECRET}} aessecret=${{secrets.AESSECRET}} jwtsecret=${{secrets.JWTSECRET}} jest --testEnvironment=node --verbose --forceExit --maxWorkers=1
