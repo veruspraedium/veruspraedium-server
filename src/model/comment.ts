@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 
 const commentSchema = new Schema({
-  postId: String,
-  groupId: String,
-  content: String,
-  class: Number,
-  order: Number,
+  postId: { type: String },
+  groupId: { type: String },
+  content: { type: String },
+  class: { type: Number },
+  order: { type: Number },
   date: { type: Date, default: Date.now }
 });
 

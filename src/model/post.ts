@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 
 
 const postSchema = new Schema({
-  userId: String,
+  userId: { type: String },
   title: { type: String, unique: true },
-  category: Number,
-  preview: String,
+  category: { type: Number },
+  preview: { type: String },
   titleImage: { type: String, default:'default image' },
-  content: String,
+  content: { type: String },
   like: { type: Number, default: 0 },
   publishedDate: { type: Date, default: Date.now }
 });
