@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import redis from 'async-redis';
-import crypto from 'crypto';
 import User from '../../model/user';
 import { jwtverify } from '../../lib/token';
 import dotenv from 'dotenv';

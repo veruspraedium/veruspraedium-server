@@ -27,7 +27,7 @@ api.get('/token', requestAccessToken);
 api.post('/findpassword', findPassword);
 api.get('/loadimage/:imagepath', loadImage);
 
-api.post('/post', post);
+api.post('/post', upload.single('titleImage'), post);
 
 
 export default api
