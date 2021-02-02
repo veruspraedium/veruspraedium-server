@@ -22,5 +22,17 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - run: yarn install
-    - run: yarn add cross-env
-    - run: cross-env uri='${{secrets.URI}}' emailid=${{secrets.EMAILID}} emailpassword=${{secrets.EMAILPASSWORD}} secret=${{secrets.SECRET}} aessecret=${{secrets.AESSECRET}} jwtsecret=${{secrets.JWTSECRET}} jest --testEnvironment=node --verbose --forceExit --maxWorkers=1
+    - run: ./node_modules/.bin/cross-env uri='${{secrets.URI}}'
+    - run: ./node_modules/.bin/cross-env-shell uri='${{secrets.URI}}'
+    - run: ./node_modules/.bin/cross-env emailid=${{secrets.EMAILID}} 
+    - run: ./node_modules/.bin/cross-env-shell emailid=${{secrets.EMAILID}} 
+    - run: ./node_modules/.bin/cross-env emailpassword=${{secrets.EMAILPASSWORD}} 
+    - run: ./node_modules/.bin/cross-env-shell emailpassword=${{secrets.EMAILPASSWORD}} 
+    - run: ./node_modules/.bin/cross-env secret=${{secrets.SECRET}} 
+    - run: ./node_modules/.bin/cross-env-shell secret=${{secrets.SECRET}} 
+    - run: ./node_modules/.bin/cross-env aessecret=${{secrets.AESSECRET}} 
+    - run: ./node_modules/.bin/cross-env-shell aessecret=${{secrets.AESSECRET}} 
+    - run: ./node_modules/.bin/cross-env jwtsecret=${{secrets.JWTSECRET}} 
+    - run: ./node_modules/.bin/cross-env-shell jwtsecret=${{secrets.JWTSECRET}} 
+
+    - run: jest --testEnvironment=node --verbose --forceExit --maxWorkers=1
