@@ -23,7 +23,7 @@ jobs:
 
     - run: yarn install
 
-    run: |
+    - run: |
       touch .env
       echo uri=${{secrets.URI}}  >> .env
 
