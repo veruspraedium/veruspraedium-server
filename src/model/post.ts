@@ -3,16 +3,14 @@ const Schema = mongoose.Schema;
 
 
 const postSchema = new Schema({
-  id: {type: String, unique: true},
-  password: String,
-  nickname: {type: String,unique: true},
-  address: String,
-  introduce: { type: String, default: "default introduce" },
-  profileImage: { type: String, default: "no image" },
-  isWriter: { type: Boolean, default: false },
-  subscribe: { type: Array, default: [] },
-  cert: { type: Boolean, default: false },
-  published_date: { type: Date, default: Date.now }
+  userId: String,
+  title: { type: String, unique: true },
+  category: Number,
+  preview: String,
+  titleImage: { type: String, default:'default image' },
+  content: String,
+  like: { type: Number, default: 0 },
+  publishedDate: { type: Date, default: Date.now }
 });
 
 
