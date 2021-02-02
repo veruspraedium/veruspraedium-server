@@ -22,4 +22,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - run: yarn install
-    - run: yarn uri=${{env.URI}} emailid=${{env.EMAILID}} emailpassword=${{env.EMAILPASSWORD}} secret=${{env.SECRET}} aessecret=${{env.AESSECRET}} jwtsecret=${{env.JWTSECRET}} test
+    - run: yarn uri=${{secrets.URI}} emailid=${{secrets.EMAILID}} emailpassword=${{secrets.EMAILPASSWORD}} secret=${{secrets.SECRET}} aessecret=${{secrets.AESSECRET}} jwtsecret=${{secrets.JWTSECRET}} test
