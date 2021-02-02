@@ -21,5 +21,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - run: npm install
-    - run: npm uri=${{env.URI}} emailid=${{env.EMAILID}} emailpassword=${{env.EMAILPASSWORD}} secret=${{env.SECRET}} aessecret=${{env.AESSECRET}} jwtsecret=${{env.JWTSECRET}} test
+    - run: yarn install
+    - run: yarn uri=${{env.URI}} emailid=${{env.EMAILID}} emailpassword=${{env.EMAILPASSWORD}} secret=${{env.SECRET}} aessecret=${{env.AESSECRET}} jwtsecret=${{env.JWTSECRET}} test
