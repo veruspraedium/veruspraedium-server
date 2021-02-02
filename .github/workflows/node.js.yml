@@ -35,4 +35,4 @@ jobs:
     - run: ./node_modules/.bin/cross-env jwtsecret=${{secrets.JWTSECRET}} 
     - run: ./node_modules/.bin/cross-env-shell jwtsecret=${{secrets.JWTSECRET}} 
 
-    - run: jest --testEnvironment=node --verbose --forceExit --maxWorkers=1
+    - run: yarn test
