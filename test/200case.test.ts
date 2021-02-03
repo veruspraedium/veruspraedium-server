@@ -6,10 +6,6 @@ jest.setTimeout(30000);
 
 let accessToken, refreshToken, id, password, nickname, address;
 
-console.log("9--------------------------------------------------------------------------------------");
-console.log(process.env.uri);
-
-
 beforeAll(async () => {
   id = `${await Math.random().toString(36).substr(2,11)}@liamg.moc`;
   password = await Math.random().toString(36).substr(2,11);
