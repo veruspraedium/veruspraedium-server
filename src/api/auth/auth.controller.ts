@@ -46,8 +46,13 @@ export const signUp = (async (ctx) => { // 0
       };
     }
   }catch(err){ 
-    console.log("에러죠?");
-    }
+    status = 403;
+    body = {
+      "errorMessage" : "invalid_form",
+      "errorCode" : "E401",
+      "errorDescription" : "잘못된 형식의 요청 또는 권한 없음"
+    };
+  }
 
   ctx.status = status;
   ctx.body = body;
@@ -213,7 +218,12 @@ export const duplicateCheck = (async (ctx) => { // 0
       }
       status = 200;
     }catch(err){
-      console.log(err);
+      status = 403;
+      body = {
+        "errorMessage" : "invalid_form",
+        "errorCode" : "E401",
+        "errorDescription" : "잘못된 형식의 요청 또는 권한 없음"
+      };
     }
   }
   
@@ -285,7 +295,12 @@ export const login = (async (ctx) => { // 0
       };
     }
   }catch(err){
-    console.log(err);
+    status = 403;
+    body = {
+      "errorMessage" : "invalid_form",
+      "errorCode" : "E401",
+      "errorDescription" : "잘못된 형식의 요청 또는 권한 없음"
+    };
   }
 
   ctx.status = status;
@@ -346,7 +361,7 @@ export const findPassword = (async (ctx) => { // 0
     rows = await User.find({id: id}).limit(1).exec();
 
     if (rows[0] != undefined) {
-      findUser(id).then(async () =>{ console.log("[system] - 유저비번찾기 완료"); });
+      await findUser(id);
 
       status = 202;
       body = {};
