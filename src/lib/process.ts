@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import User from '../model/user';
 import Post from '../model/post';
+import Comment from '../model/comment';
 import { sendmail } from './email';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -82,6 +83,31 @@ export const addPost = (async (id, title ,category ,preview ,content, imagePath)
   }
   catch(err){
     console.log('[system] - 중복글 존재 또는 옳지 않은 형식');
+    check = false;
+  }
+
+  return check;
+});
+
+export const addComment = (async (postId, groupId, content, userId, commentClass, commentOrder) =>{
+  let check = true;
+  
+  try{
+  console.log("[system] - 댓글 추가 시작");
+
+  const comment = new Comment({
+    postId: postId,
+    groupId: groupId,
+    content: content,
+    userId: userId,
+    class: commentClass,
+    order: commentOrder
+  });
+  await comment.save();
+  console.log("[system] - 댓글 추가 완료");
+  }
+  catch(err){
+    console.log('[system] - 옳지 않은 형식');
     check = false;
   }
 
