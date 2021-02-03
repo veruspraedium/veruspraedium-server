@@ -5,6 +5,8 @@ import logger from 'koa-logger';
 import koaBody from 'koa-body';
 import helmet from 'koa-helmet';
 import http from 'http';
+import dotenv from 'dotenv';
+dotenv.config();
 
 import api from './api';
 
@@ -22,6 +24,6 @@ router.use('/api', api.routes());
 let serverCallback = app.callback();
 let httpServer = http.createServer(serverCallback);
 
-httpServer.listen(5000, ()=>{console.log("success 5000")});
+httpServer.listen(process.env.port || 6000, ()=>{console.log("success 5000")});
 
 export const server = app;
