@@ -9,7 +9,7 @@ const postSchema = new Schema({
   preview: { type: String },
   titleImage: { type: String, default:'default image' },
   content: { type: String },
-  like: { type: Number, default: 0 },
+  like: { type: Array, default: [] },
   publishedDate: { type: Date, default: Date.now }
 });
 
