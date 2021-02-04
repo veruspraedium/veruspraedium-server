@@ -4,6 +4,7 @@ import Post from '../../model/post';
 import Comment from '../../model/comment';
 import { jwtverify } from '../../lib/token';
 import { addPost, addComment } from '../../lib/process';
+import { errorCode } from '../../lib/errorcode';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -36,29 +37,14 @@ export const post = (async (ctx) => {
 
         status = 201;
         body = {};
-      }else{
-        status = 403;
-        body = {
-          "errorMessage" : "invalid_form",
-          "errorCode" : "E401",
-          "errorDescription" : "잘못된 형식의 요청 또는 중복된 데이터 존재"
-        };
-      }
+      }else{ throw new Error('403'); }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -101,19 +87,11 @@ export const loadPost = (async (ctx) => {
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -152,27 +130,15 @@ export const changePost = (async (ctx) => {
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_post",
-          "errorCode" : "E601",
-          "errorDescription" : "존재하지 않는 글"
-        }; 
+        body = await errorCode(601);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_from",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      }; 
+      body = await errorCode(401);
     }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
   ctx.status = status;
   ctx.body = body;
@@ -193,27 +159,15 @@ export const deletePost = (async (ctx) => {
         body = {};
       }else{
         status = 401;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E109",
-          "errorDescription" : "권한 없음"
-        };
+        body = await errorCode(109);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -236,27 +190,15 @@ export const subscribe = (async (ctx) => {
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 계정 또는 이미 구독한 계정"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -276,27 +218,15 @@ export const loadSubscribeList = (async (ctx) => {
         body = {"writer" : rows[0]['subscribe']};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 계정"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -318,27 +248,15 @@ export const unSubscribe = (async (ctx) => {
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 계정 또는 구독 취소한 계정"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -360,27 +278,15 @@ export const like = (async (ctx) => {
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 글 또는 이미 좋아요한 글"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -402,27 +308,15 @@ export const unLike = (async (ctx) => {
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 글 또는 좋아요하지 않은 글"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -470,27 +364,15 @@ export const comment = (async (ctx) => {
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 글"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -512,27 +394,15 @@ export const loadComment = (async (ctx) => {
         body = {comments: commentRows};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 글"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -555,27 +425,15 @@ export const updateComment = (async (ctx) => {
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 댓글"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청 또는 권한 없음"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -597,27 +455,15 @@ export const deleteComment = (async (ctx) => {
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 댓글"
-        };
+        body = await errorCode(108);
       }
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청 또는 권한 없음"
-      };
+      body = await errorCode(401);
      }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;

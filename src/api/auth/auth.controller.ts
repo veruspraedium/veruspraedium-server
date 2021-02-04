@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import send from 'koa-send';
 import User from '../../model/user';
 import { addUser, findUser, updateUserId } from '../../lib/process';
+import { errorCode } from '../../lib/errorcode';
 import { jwtsign, jwtverify } from '../../lib/token';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -17,7 +18,7 @@ const mongoConfig = {
 mongoose.connect(process.env.uri, mongoConfig);
 
 
-export const signUp = (async (ctx) => { // 0
+export const signUp = (async (ctx) => { 
   const {id, nickname, address, password} = ctx.request.body;
   let body,status,rows,check;
 
@@ -31,34 +32,22 @@ export const signUp = (async (ctx) => { // 0
         body = {};
       }else{
         status = 412;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E105",
-          "errorDescription" : "잘못된 이메일 형식"
-        };      
+        body = await errorCode(105);
       }
     }else{
       status = 403;
-      body = {
-        "errorMessage" : "invalid_account",
-        "errorCode" : "E102",
-        "errorDescription" : "이미 존재하는 계정"
-      };
+      body = await errorCode(102);
     }
   }catch(err){ 
     status = 403;
-    body = {
-      "errorMessage" : "invalid_form",
-      "errorCode" : "E401",
-      "errorDescription" : "잘못된 형식의 요청 또는 권한 없음"
-    };
+    body = await errorCode(401);
   }
 
   ctx.status = status;
   ctx.body = body;
 });
 
-export const loadProfile = (async (ctx) => { // 0
+export const loadProfile = (async (ctx) => { 
   const accesstoken = await jwtverify(ctx.request.header.accesstoken);
   let body,status,rows;
   
@@ -77,20 +66,15 @@ export const loadProfile = (async (ctx) => { // 0
         };
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 계정"
-        };
+        body = await errorCode(108);
       }
-    }catch(err){ return 'error occured'; }
+    }catch(err){ 
+      status = 403;
+      body = await errorCode(401); 
+    }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
@@ -134,25 +118,17 @@ export const changeProfile = (async (ctx) => {
       body = {};
     }catch(err){ 
       status = 403;
-      body = {
-        "errorMessage" : "invalid_from",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청"
-      }; 
+      body = await errorCode(401);
     }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
   ctx.status = status;
   ctx.body = body;
 });
 
-export const userSecession = (async (ctx) => { // 0
+export const userSecession = (async (ctx) => { 
   const accesstoken = await jwtverify(ctx.request.header.accesstoken);
   const { refreshtoken } = ctx.request.header;
   const refreshtokenCheck = await jwtverify(refreshtoken);
@@ -172,27 +148,22 @@ export const userSecession = (async (ctx) => { // 0
         body = {};
       }else{
         status = 403;
-        body = {
-          "errorMessage" : "invalid_account",
-          "errorCode" : "E108",
-          "errorDescription" : "존재하지 않는 계정"
-        };
+        body = await errorCode(108);
       }
-    }catch(err){ return 'error occured'; }
+    }catch(err){ 
+      status = 403;
+      body = await errorCode(401); 
+    }
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
   ctx.body = body;
 });
 
-export const duplicateCheck = (async (ctx) => { // 0
+export const duplicateCheck = (async (ctx) => { 
   const {id, nickname} = ctx.request.header;
   let body,status,rows,sql;
 
@@ -200,11 +171,7 @@ export const duplicateCheck = (async (ctx) => { // 0
   else if (id == undefined && nickname != undefined){ sql = {nickname: nickname}; }
   else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_from",
-      "errorCode" : "E401",
-      "errorDescription" : "잘못된 형식의 요청"
-    };
+    body = await errorCode(401);
   }
 
   if (sql != undefined){
@@ -219,11 +186,7 @@ export const duplicateCheck = (async (ctx) => { // 0
       status = 200;
     }catch(err){
       status = 403;
-      body = {
-        "errorMessage" : "invalid_form",
-        "errorCode" : "E401",
-        "errorDescription" : "잘못된 형식의 요청 또는 권한 없음"
-      };
+      body = await errorCode(401);
     }
   }
   
@@ -232,7 +195,7 @@ export const duplicateCheck = (async (ctx) => { // 0
   ctx.body = body;
 });
 
-export const verification = (async (ctx) => { // 0
+export const verification = (async (ctx) => { 
   const { code } = ctx.params;
   let body,status,rows;
 
@@ -249,26 +212,18 @@ export const verification = (async (ctx) => { // 0
       body = {};
     }else{
       status = 412;
-      body = {
-        "errorMessage" : "invalid_account",
-        "errorCode" : "E108",
-        "errorDescription" : "존재하지 않는 계정"
-      };
+      body = await errorCode(108);
     }
   }catch(err){
     status = 403;
-    body = {
-      "errorMessage" : "invalid_from",
-      "errorCode" : "E402",
-      "errorDescription" : "잘못되거나 만료된 요청"
-    };
+    body = await errorCode(402);
   }
 
   ctx.status = status;
   ctx.body = body;
 });
 
-export const login = (async (ctx) => { // 0
+export const login = (async (ctx) => { 
   const { id } = ctx.request.body;
   const password = crypto.createHmac('sha512', process.env.secret).update(ctx.request.body.password).digest('hex');
   let body,status,rows,refreshToken,accessToken;
@@ -288,26 +243,18 @@ export const login = (async (ctx) => { // 0
       };
     }else{
       status = 403;
-      body = {
-        "errorMessage" : "invalid_account",
-        "errorCode" : "E101",
-        "errorDescription" : "id 및 password가 일치하지 않음"
-      };
+      body = await errorCode(101);
     }
   }catch(err){
     status = 403;
-    body = {
-      "errorMessage" : "invalid_form",
-      "errorCode" : "E401",
-      "errorDescription" : "잘못된 형식의 요청 또는 권한 없음"
-    };
+    body = await errorCode(401);
   }
 
   ctx.status = status;
   ctx.body = body;
 });
 
-export const logout = (async (ctx) => { // 0
+export const logout = (async (ctx) => { 
   let { accesstoken } = ctx.request.header;
   let body,status;
   accesstoken = await jwtverify(accesstoken);
@@ -319,18 +266,14 @@ export const logout = (async (ctx) => { // 0
     body = {};
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 access_token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
   ctx.body = body;
 });
 
-export const requestAccessToken = (async (ctx) => { // 0
+export const requestAccessToken = (async (ctx) => { 
   let { accesstoken, refreshtoken } = ctx.request.header;
   let refreshtokenCheck = await jwtverify(refreshtoken);
   let body,status;
@@ -342,18 +285,14 @@ export const requestAccessToken = (async (ctx) => { // 0
     body = { "accessToken" : accesstoken };
   }else{
     status = 412;
-    body = {
-      "errorMessage" : "invalid_grant",
-      "errorCode" : "E302",
-      "errorDescription" : "잘못되거나 만료된 token"
-    };
+    body = await errorCode(302);
   }
 
   ctx.status = status;
   ctx.body = body;
 });
 
-export const findPassword = (async (ctx) => { // 0
+export const findPassword = (async (ctx) => { 
   const { id } = ctx.request.body;
   let body,status,rows;
 
@@ -367,31 +306,23 @@ export const findPassword = (async (ctx) => { // 0
       body = {};
     }else{
       status = 403;
-      body = {
-        "errorMessage" : "invalid_account",
-        "errorCode" : "E108",
-        "errorDescription" : "존재하지 않는 계정"
-      };
+      body = await errorCode(108);
     }
   }catch(err){
-    return 'error occured';
+    status = 403;
+    body = await errorCode(401); 
   }
-
   ctx.status = status;
   ctx.body = body;
 });
 
-export const loadImage = (async (ctx) => { // 0
+export const loadImage = (async (ctx) => { 
   const { imagepath } = ctx.params;
   
   try {
    await send(ctx, imagepath, { root:  './files/' });
   }catch(err){
     ctx.status = 403;
-    ctx.body = {
-      "errorMessage" : "does_not_exist",
-      "errorCode" : "E501",
-      "errorDescription" : "존재하지 않는 파일"
-    };
+    ctx.body = await errorCode(501);
   }
 });
