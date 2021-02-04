@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-
 const userSchema = new Schema({
   id: {type: String, unique: true},
   password: { type: String },
@@ -14,6 +13,5 @@ const userSchema = new Schema({
   cert: { type: Boolean, default: false },
   signUpDate: { type: Date, default: Date.now }
 });
-
 
 export default mongoose.model('user', userSchema);

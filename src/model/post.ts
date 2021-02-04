@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-
 const postSchema = new Schema({
   userId: { type: String },
   title: { type: String, unique: true },
@@ -12,6 +11,5 @@ const postSchema = new Schema({
   like: { type: Array, default: [] },
   publishedDate: { type: Date, default: Date.now }
 });
-
 
 export default mongoose.model('post', postSchema);

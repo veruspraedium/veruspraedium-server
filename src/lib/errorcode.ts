@@ -86,6 +86,5 @@ export const errorCode = (async (code) => {
       break;
   }
 
-
   return body;
 });

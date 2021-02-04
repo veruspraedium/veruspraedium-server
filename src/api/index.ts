@@ -9,7 +9,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-
 import {signUp, loadProfile, changeProfile, userSecession, duplicateCheck, verification, login, logout, requestAccessToken, findPassword, loadImage} from './auth/auth.controller';
 import {post, loadPost, changePost, deletePost, subscribe, loadSubscribeList, unSubscribe, like, unLike, comment, loadComment, updateComment, deleteComment} from './post/post.controller';
 
@@ -40,6 +39,5 @@ api.post('/comment', comment);
 api.get('/comment', loadComment);
 api.put('/comment', updateComment);
 api.delete('/comment', deleteComment);
-
 
 export default api
