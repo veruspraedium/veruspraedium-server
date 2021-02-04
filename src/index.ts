@@ -24,6 +24,6 @@ router.use('/api', api.routes());
 let serverCallback = app.callback();
 let httpServer = http.createServer(serverCallback);
 
-httpServer.listen(process.env.port || 6000, ()=>{console.log("success 5000")});
+httpServer.listen(process.env.port || 6000, ()=>{console.log(`success 5000${process.env.port || 6000}`)});
 
 export const server = app;
