@@ -3,6 +3,7 @@ import User from '../model/user';
 import Post from '../model/post';
 import Comment from '../model/comment';
 import { sendmail } from './email';
+import { log } from './log';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,7 +15,6 @@ export const addUser = (async (id, password, nickname, address) =>{
   let check = true;
 
   try{
-  console.log("[system] - 유저추가 시작");
   await sendmail(id,'test',`http://localhost:5000/api/verification/${result}`);
 
   const user = new User({
@@ -24,7 +24,7 @@ export const addUser = (async (id, password, nickname, address) =>{
     address: address,
   });
   await user.save();
-  console.log("[system] - 유저추가 완료");
+  await log('L101',`유저추가-${id}`);
   }
   catch(err){
     console.log('[system] - 유효하지 않은 이메일');
@@ -34,18 +34,16 @@ export const addUser = (async (id, password, nickname, address) =>{
   return check;
 });
 
-
 export const findUser = (async (id) =>{
   console.log("[system] - 유저비번찾기 시작");
   
   let newPassword = await Math.random().toString(36).substr(2,11);
   const password = await crypto.createHmac('sha512', process.env.secret).update(newPassword).digest('hex');
 
-  await User.update({id: id}, {password: password});
+  await User.updateOne({id: id}, {password: password});
   await sendmail(id,'비밀번호 찾기',`id 님의 비밀번호는 ${newPassword} 입니다. 로그인 후 변경해주세요.`);
   return;
 });
-
 
 export const updateUserId = (async (id) =>{
   const cipher = crypto.createCipher('aes-256-cbc', process.env.aessecret);
@@ -53,22 +51,20 @@ export const updateUserId = (async (id) =>{
   result += cipher.final('base64');
   let check = true;
 
-    try{
+  try{
     await sendmail(id,'test',`http://localhost:5000/api/verification/${result}`);
     }catch(err){
     console.log('[system] - 유효하지 않은 이메일');
     check = false;
-    }
+  }
   
   return check;
 });
-
 
 export const addPost = (async (id, title ,category ,preview ,content, imagePath) =>{
   let check = true;
 
   try{
-  console.log("[system] - 글 추가 시작");
 
   const post = new Post({
     userId: id,
@@ -79,7 +75,7 @@ export const addPost = (async (id, title ,category ,preview ,content, imagePath)
     content: content
   });
   await post.save();
-  console.log("[system] - 글 추가 완료");
+  await log('L301',`글추가-${title}`);
   }
   catch(err){
     console.log('[system] - 중복글 존재 또는 옳지 않은 형식');
@@ -93,8 +89,6 @@ export const addComment = (async (postId, groupId, content, userId, commentClass
   let check = true;
   
   try{
-  console.log("[system] - 댓글 추가 시작");
-
   const comment = new Comment({
     postId: postId,
     groupId: groupId,
@@ -104,7 +98,7 @@ export const addComment = (async (postId, groupId, content, userId, commentClass
     order: commentOrder
   });
   await comment.save();
-  console.log("[system] - 댓글 추가 완료");
+  await log('L201',`댓글추가-${userId}`);
   }
   catch(err){
     console.log('[system] - 옳지 않은 형식');

@@ -12,6 +12,6 @@ const userSchema = new Schema({
   subscribe: { type: Array, default: [] },
   cert: { type: Boolean, default: false },
   signUpDate: { type: Date, default: Date.now }
-});
+},{ versionKey : false });
 
 export default mongoose.model('user', userSchema);

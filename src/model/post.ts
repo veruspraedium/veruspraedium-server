@@ -10,6 +10,6 @@ const postSchema = new Schema({
   content: { type: String },
   like: { type: Array, default: [] },
   publishedDate: { type: Date, default: Date.now }
-});
+},{ versionKey : false });
 
 export default mongoose.model('post', postSchema);

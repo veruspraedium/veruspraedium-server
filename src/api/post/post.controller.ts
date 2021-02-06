@@ -5,6 +5,7 @@ import Comment from '../../model/comment';
 import { jwtverify } from '../../lib/token';
 import { addPost, addComment } from '../../lib/process';
 import { errorCode } from '../../lib/errorcode';
+import { log } from '../../lib/log';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -124,8 +125,8 @@ export const changePost = (async (ctx) => {
             }else{ sql[options[i]] = ctx.request.body[options[i]]; }
           }else{ sql[options[i]] = rows[0][options[i]]; }
         }
-        await Post.update(sql);
-
+        await Post.updateOne(sql);
+        await log('L302',`글 변경-${postid}`);
         status = 201;
         body = {};
       }else{
@@ -155,6 +156,7 @@ export const deletePost = (async (ctx) => {
       
       if (rows[0] != undefined && rows[0]['userId'] == accesstoken[1]) {
         await Post.deleteOne({_id: rows[0]['_id']});
+        await log('L302',`글 삭제-${postid}`);
         status = 201;
         body = {};
       }else{
@@ -420,7 +422,8 @@ export const updateComment = (async (ctx) => {
     try{
       rows = await Comment.findOne({_id: commentid}).exec();
       if (rows != null && rows['userId'] == accesstoken[1]) { 
-        await Comment.update({_id: commentid, content: content}).exec();
+        await Comment.updateOne({_id: commentid, content: content}).exec();
+        await log('L202',`댓글변경-${commentid}`);
         status = 201;
         body = {};
       }else{
@@ -451,6 +454,7 @@ export const deleteComment = (async (ctx) => {
       rows = await Comment.findOne({_id: commentid}).exec();
       if (rows != null && rows['userId'] == accesstoken[1]) { 
         await Comment.deleteOne({_id: commentid}).exec();
+        await log('L203',`댓글 삭제-${commentid}`);
         status = 201;
         body = {};
       }else{

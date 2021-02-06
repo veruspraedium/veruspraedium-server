@@ -6,6 +6,7 @@ import User from '../../model/user';
 import { addUser, findUser, updateUserId } from '../../lib/process';
 import { errorCode } from '../../lib/errorcode';
 import { jwtsign, jwtverify } from '../../lib/token';
+import { log } from '../../lib/log';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -112,7 +113,8 @@ export const changeProfile = (async (ctx) => {
           }else{ sql[options[i]] = ctx.request.body[options[i]]; }
         }else{ sql[options[i]] = rows[0][options[i]]; }
       }
-      await User.update(sql);
+      await User.updateOne(sql);
+      await log('L102',`유저 정보 변경-${accesstoken[1]}`);
 
       status = 201;
       body = {};
@@ -144,6 +146,7 @@ export const userSecession = (async (ctx) => {
 
       if (rows[0] != undefined) {
         await User.deleteOne({id: accesstoken[1]});
+        await log('L103',`유저 삭제-${accesstoken[1]}`);
         status = 201;
         body = {};
       }else{
