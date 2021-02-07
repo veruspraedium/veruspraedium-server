@@ -52,7 +52,7 @@ export const updateUserId = (async (id) =>{
   let check = true;
 
   try{
-    await sendmail(id,'test',`http://localhost:5000/api/verification/${result}`);
+    await sendmail(id,'test',`http://${process.env.ip}:5000/api/verification/${result}`);
     }catch(err){
     console.log('[system] - 유효하지 않은 이메일');
     check = false;
