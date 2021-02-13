@@ -4,7 +4,7 @@ import auth from './admin';
 
 const api = new Router();
 const storage = multer.diskStorage({
-  destination: async (req, file, cb) => { cb(null, './files/') },
+  destination: async (req, file, cb) => { cb(null, './files') },
   filename: async (req, file, cb) => { cb(null,`${Date.now()}-${file.originalname}`) }
 });
 const upload = multer({ storage: storage });
